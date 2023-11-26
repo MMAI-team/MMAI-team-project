@@ -1,7 +1,11 @@
 import logging
+
 from dotenv import dotenv_values
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters, ConversationHandler, CallbackContext
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters, ConversationHandler, \
+    CallbackContext
+
+from dummy_model import DummyModel
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -11,57 +15,68 @@ logging.basicConfig(
 CHOOSING_METHOD, SEND_FIRST_DOCUMENT, SEND_SECOND_DOCUMENT = range(3)
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # TODO: Move methods list to a config file
-    reply_markup = ReplyKeyboardMarkup([["Method 1"], ["Method 2"]], resize_keyboard=True)
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="I'm a bot, please talk to me!\nChoose a method:",
-                                   reply_markup=reply_markup)
-    return CHOOSING_METHOD
+class BotMethods:
 
+    def __init__(self, models):
+        self.models = models
+        self.methods = [model.name for model in models]
+        self.reply_keyboard = ReplyKeyboardMarkup([self.methods], one_time_keyboard=True)
+        self.model_index = 0
 
-async def choose_method(update: Update, context: CallbackContext):
-    method_choice = update.message.text
-    context.user_data['method'] = method_choice
+    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="I'm a bot, please talk to me!\nChoose a method:",
+                                       reply_markup=self.reply_keyboard)
+        return CHOOSING_METHOD
 
-    reply_markup = ReplyKeyboardRemove()
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text=f"You chose {method_choice}.\nNow, send the first document.",
-                                   reply_markup=reply_markup)
-    return SEND_FIRST_DOCUMENT
+    async def choose_method(self, update: Update, context: CallbackContext):
+        method_choice = update.message.text
+        context.user_data['method'] = method_choice
+        self.model_index = self.methods.index(method_choice)
 
+        reply_markup = ReplyKeyboardRemove()
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text=f"You chose {method_choice}.\nNow, send the first document.",
+                                       reply_markup=reply_markup)
+        return SEND_FIRST_DOCUMENT
 
-async def send_first_document(update: Update, context: CallbackContext):
-    file_id = update.message.document.file_id
+    async def send_first_document(self, update: Update, context: CallbackContext):
+        file_id = update.message.document.file_id
 
-    # open file using opencv
-    new_file = await context.bot.get_file(file_id)
-    await new_file.download_to_drive('file1.jpg')
+        # open file using opencv
+        new_file = await context.bot.get_file(file_id)
+        await new_file.download_to_drive('file1.jpg')
 
-    reply_markup = ReplyKeyboardRemove()
-    await context.bot.send_document(chat_id=update.effective_chat.id, document=file_id,
-                                    reply_markup=reply_markup)
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="First document received.\nNow, send the second document.")
-    return SEND_SECOND_DOCUMENT
+        reply_markup = ReplyKeyboardRemove()
+        await context.bot.send_document(chat_id=update.effective_chat.id, document=file_id,
+                                        reply_markup=reply_markup)
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="First document received.\nNow, send the second document.")
+        return SEND_SECOND_DOCUMENT
 
+    async def send_second_document(self, update: Update, context: CallbackContext):
+        file_id = update.message.document.file_id
 
-async def send_second_document(update: Update, context: CallbackContext):
-    file_id = update.message.document.file_id
+        # open file using opencv
+        new_file = await context.bot.get_file(file_id)
+        await new_file.download_to_drive('file2.jpg')
 
-    # open file using opencv
-    new_file = await context.bot.get_file(file_id)
-    await new_file.download_to_drive('file2.jpg')
+        reply_markup = ReplyKeyboardRemove()
+        await context.bot.send_document(chat_id=update.effective_chat.id, document=file_id,
+                                        reply_markup=reply_markup)
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Received both documents!")
 
-    reply_markup = ReplyKeyboardRemove()
-    await context.bot.send_document(chat_id=update.effective_chat.id, document=file_id,
-                                    reply_markup=reply_markup)
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Received both documents!")
+        model = self.models[self.model_index]
 
-    # Clear user_data for the next conversation
-    context.user_data.clear()
+        # TODO: get result from model using the two files
+        result = model.predict(['file1.jpg', 'file2.jpg'])
 
-    return ConversationHandler.END
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Result: {result}")
+
+        # Clear user_data for the next conversation
+        context.user_data.clear()
+
+        return ConversationHandler.END
 
 
 if __name__ == '__main__':
@@ -69,12 +84,21 @@ if __name__ == '__main__':
 
     application = ApplicationBuilder().token(token).build()
 
+    models = [
+        DummyModel('Method 1', 1),
+        DummyModel('Method 2', 2),
+        DummyModel('Method 3', 3),
+        DummyModel('Method 4', 4),
+    ]
+
+    bot_methods = BotMethods(models)
+
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[CommandHandler('start', bot_methods.start)],
         states={
-            CHOOSING_METHOD: [MessageHandler(filters.TEXT, choose_method)],
-            SEND_FIRST_DOCUMENT: [MessageHandler(filters.ATTACHMENT, send_first_document)],
-            SEND_SECOND_DOCUMENT: [MessageHandler(filters.ATTACHMENT, send_second_document)],
+            CHOOSING_METHOD: [MessageHandler(filters.TEXT, bot_methods.choose_method)],
+            SEND_FIRST_DOCUMENT: [MessageHandler(filters.ATTACHMENT, bot_methods.send_first_document)],
+            SEND_SECOND_DOCUMENT: [MessageHandler(filters.ATTACHMENT, bot_methods.send_second_document)],
         },
         fallbacks=[]
     )
