@@ -1,11 +1,13 @@
 import tensorflow as tf
 AUTOTUNE = tf.data.AUTOTUNE
+import datetime
+from datetime import date, datetime
 
 import pandas as pd
 import numpy as np
 from datetime import date
 
-
+# This class is deprecated and in the future versions will be deleted
 class Preprocessor:
     def __init__(self, dataframe):
 
@@ -251,3 +253,137 @@ def preprocess_data(data):
     
     
     return tf.convert_to_tensor(padded), index
+
+
+# The new preprocessor class
+
+class PreprocessorML():
+    def __init__(self, normalization=False):
+        self.norm = normalization
+    
+
+    def one_hot_category(self, dataset):
+        hot = ['gas_transport', 'grocery_pos', 'home', 'shopping_pos', 'kids_pets', 'shopping_net', 'entertainment',
+               'food_dining', 'personal_care', 'health_fitness', 'misc_pos', 'misc_net', 'grocery_net', 'travel']
+        
+        for category in hot:
+            dataset[category] = pd.Series([1 if x.category == category else 0 for x in dataset.itertuples()],
+                                          index=dataset.index)
+        
+        return dataset
+
+
+    def add_time(self, dataset):
+        dataframe = dataset.sort_values(by=['cc_num', 'unix_time'])
+
+        delta_time = []
+
+        previous_row = dataframe.iloc[0]
+
+        delta_time.append(0)
+
+        for row in dataframe[1:].itertuples():
+
+            if row.cc_num == previous_row.cc_num:
+                delta_time.append(row.unix_time - previous_row.unix_time)
+            else:
+                delta_time.append(0)
+
+            previous_row = row
+
+        dataframe['delta_time'] = pd.Series(delta_time, index=dataframe.index)
+
+        return dataframe
+
+
+    def parse_time(self, string):
+        return datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
+
+
+    def add_workhour_category(self, dataset):
+        dataset['work_hours'] = dataset['trans_date_trans_time'].apply(
+            lambda x: 
+                int(self.parse_time(x).hour >= 6 and self.parse_time(x).hour <= 18))
+        return dataset
+
+
+    def add_weekend_category(self, dataset):
+        dataset['weekend'] = dataset['trans_date_trans_time'].apply(
+            lambda x: 
+                int(self.parse_time(x).weekday() >= 5 and self.parse_time(x).weekday() <= 6))
+        return dataset
+
+    
+    def add_age(self, dataset):
+        dataset['age'] = dataset['dob'].apply(lambda x: (date.today() - date.fromisoformat(x)).days // 365)
+        return dataset
+
+
+    def add_distance(self, dataset):
+        lat1 = dataset['lat']
+        lon1 = dataset['longs']
+        lat2 = dataset['merch_lat']
+        lon2 = dataset['merch_long']
+        dataset['distance'] = np.arccos(np.sin(lat1) * np.sin(lat2) + np.cos(lat1) * np.cos(lat2) * np.cos(lon1 - lon2)) * 6371
+        return dataset
+
+    
+    def add_gender(self, dataset):
+        dataset['gender'] = pd.Categorical(dataset['gender'], categories=['F', 'M'])
+        hot = pd.get_dummies(dataset['gender'], columns = ['F', 'M'])
+        
+        return dataset.join(hot)
+
+
+    def add_weekday(self, dataset):
+        dataset['weekday'] = dataset['trans_date_trans_time'].apply(
+            lambda x: int(self.parse_time(x).weekday()))
+        
+        return dataset
+    
+    def add_hour(self, dataset):
+        dataset['hour'] = dataset['trans_date_trans_time'].apply(
+            lambda x: int(self.parse_time(x).hour))
+        
+        return dataset
+
+
+    def preprocess(self, dataset, columns_to_delete=['cc_num', 
+                      'city', 
+                      'dob', 
+                      'job', 
+                      'first', 
+                      'last',
+                      'trans_date_trans_time',
+                      'category',
+                      'trans_num',
+                      'lat',
+                      'longs',
+                      'merch_lat',
+                      'merch_long',
+                      'unix_time',
+                      'street',
+                      'merchant',
+                      'state',
+                      'gender']):
+        dataset = self.add_age(dataset)
+        dataset = self.add_distance(dataset)
+        dataset = self.one_hot_category(dataset)
+        dataset = self.add_time(dataset)
+        dataset = self.add_workhour_category(dataset)
+        dataset = self.add_weekend_category(dataset)
+        dataset = self.add_gender(dataset)
+        print(type(dataset))
+        dataset = self.add_hour(dataset)
+        print(type(dataset))
+        dataset = self.add_weekday(dataset)
+        print(type(dataset))
+
+        dataset = dataset.drop(columns_to_delete, axis = 1)
+
+        return dataset
+    
+    
+    def preprocess_submit(self, data):
+        return self.preprocess(data)
+        

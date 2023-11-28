@@ -3,3 +3,6 @@ numpy
 flask
 tensorflow
 python-dotenv
+joblib
+xgboost
+scikit-learn
