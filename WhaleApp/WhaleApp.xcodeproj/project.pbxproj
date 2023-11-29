@@ -13,6 +13,8 @@
 		DEE367772B17750E00C8D4CD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DEE367752B17750E00C8D4CD /* Main.storyboard */; };
 		DEE367792B17750F00C8D4CD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DEE367782B17750F00C8D4CD /* Assets.xcassets */; };
 		DEE3677C2B17750F00C8D4CD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DEE3677A2B17750F00C8D4CD /* LaunchScreen.storyboard */; };
+		DEE367882B177C1200C8D4CD /* SColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE367872B177C1200C8D4CD /* SColor.swift */; };
+		DEE3678B2B177CBD00C8D4CD /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE3678A2B177CBD00C8D4CD /* UIColor+Hex.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		DEE367782B17750F00C8D4CD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DEE3677B2B17750F00C8D4CD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DEE3677D2B17750F00C8D4CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DEE367872B177C1200C8D4CD /* SColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SColor.swift; sourceTree = "<group>"; };
+		DEE3678A2B177CBD00C8D4CD /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +60,57 @@
 		DEE3676E2B17750E00C8D4CD /* WhaleApp */ = {
 			isa = PBXGroup;
 			children = (
-				DEE3676F2B17750E00C8D4CD /* AppDelegate.swift */,
-				DEE367712B17750E00C8D4CD /* SceneDelegate.swift */,
-				DEE367732B17750E00C8D4CD /* ViewController.swift */,
-				DEE367752B17750E00C8D4CD /* Main.storyboard */,
+				DEE367832B177B8800C8D4CD /* ViewControllers */,
+				DEE367852B177BE300C8D4CD /* Managers */,
+				DEE367862B177BFF00C8D4CD /* Utils */,
+				DEE367892B177CB000C8D4CD /* Extensions */,
+				DEE367842B177B9200C8D4CD /* Supporting Files */,
 				DEE367782B17750F00C8D4CD /* Assets.xcassets */,
-				DEE3677A2B17750F00C8D4CD /* LaunchScreen.storyboard */,
 				DEE3677D2B17750F00C8D4CD /* Info.plist */,
 			);
 			path = WhaleApp;
+			sourceTree = "<group>";
+		};
+		DEE367832B177B8800C8D4CD /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				DEE367732B17750E00C8D4CD /* ViewController.swift */,
+				DEE367752B17750E00C8D4CD /* Main.storyboard */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		DEE367842B177B9200C8D4CD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DEE3677A2B17750F00C8D4CD /* LaunchScreen.storyboard */,
+				DEE3676F2B17750E00C8D4CD /* AppDelegate.swift */,
+				DEE367712B17750E00C8D4CD /* SceneDelegate.swift */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DEE367852B177BE300C8D4CD /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		DEE367862B177BFF00C8D4CD /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				DEE367872B177C1200C8D4CD /* SColor.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		DEE367892B177CB000C8D4CD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DEE3678A2B177CBD00C8D4CD /* UIColor+Hex.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,8 +185,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				DEE367742B17750E00C8D4CD /* ViewController.swift in Sources */,
+				DEE367882B177C1200C8D4CD /* SColor.swift in Sources */,
 				DEE367702B17750E00C8D4CD /* AppDelegate.swift in Sources */,
 				DEE367722B17750E00C8D4CD /* SceneDelegate.swift in Sources */,
+				DEE3678B2B177CBD00C8D4CD /* UIColor+Hex.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
