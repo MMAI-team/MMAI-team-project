@@ -23,6 +23,17 @@
                                         <rect key="frame" x="3" y="3" width="190.66666666666666" height="190.66666666666666"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6da-hx-zYN">
+                                        <rect key="frame" x="156.66666666666666" y="8" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="Tjp-kX-xPM"/>
+                                            <constraint firstAttribute="height" constant="32" id="k5g-Pd-5zg"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="xmark.circle.fill" catalog="system">
+                                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </buttonConfiguration>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemMintColor"/>
                                 <constraints>
@@ -30,7 +41,9 @@
                                     <constraint firstAttribute="width" secondItem="f1z-n7-bds" secondAttribute="height" multiplier="50:50" id="H7V-YF-49Y"/>
                                     <constraint firstAttribute="bottom" secondItem="VCQ-rr-Esj" secondAttribute="bottom" constant="3" id="TUY-n2-UhM"/>
                                     <constraint firstItem="VCQ-rr-Esj" firstAttribute="leading" secondItem="f1z-n7-bds" secondAttribute="leading" constant="3" id="i2j-Fa-6iP"/>
+                                    <constraint firstAttribute="trailing" secondItem="6da-hx-zYN" secondAttribute="trailing" constant="8" id="ifU-AT-BhT"/>
                                     <constraint firstAttribute="trailing" secondItem="VCQ-rr-Esj" secondAttribute="trailing" constant="3" id="qFn-1n-b6Q"/>
+                                    <constraint firstItem="6da-hx-zYN" firstAttribute="top" secondItem="f1z-n7-bds" secondAttribute="top" constant="8" id="zWQ-er-TNs"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iTB-dM-MKC">
@@ -51,12 +64,25 @@
                                         <rect key="frame" x="3" y="3" width="198.66666666666666" height="211.66666666666666"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XTX-5Q-xrG">
+                                        <rect key="frame" x="164.66666666666666" y="8" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="32" id="2cM-eY-905"/>
+                                            <constraint firstAttribute="width" constant="32" id="x3C-uL-h7h"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="xmark.circle.fill" catalog="system">
+                                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </buttonConfiguration>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
+                                    <constraint firstItem="XTX-5Q-xrG" firstAttribute="top" secondItem="IY2-YY-Xxa" secondAttribute="top" constant="8" id="8aH-5g-FAC"/>
                                     <constraint firstItem="v1g-ea-Ad9" firstAttribute="top" secondItem="IY2-YY-Xxa" secondAttribute="top" constant="3" id="Ba2-2i-xyK"/>
                                     <constraint firstItem="v1g-ea-Ad9" firstAttribute="leading" secondItem="IY2-YY-Xxa" secondAttribute="leading" constant="3" id="R1x-uf-1h6"/>
                                     <constraint firstAttribute="trailing" secondItem="v1g-ea-Ad9" secondAttribute="trailing" constant="3" id="jfA-ix-Lup"/>
+                                    <constraint firstAttribute="trailing" secondItem="XTX-5Q-xrG" secondAttribute="trailing" constant="8" id="r0a-wq-tJy"/>
                                     <constraint firstAttribute="bottom" secondItem="v1g-ea-Ad9" secondAttribute="bottom" constant="3" id="sIH-Vy-UWX"/>
                                 </constraints>
                             </view>
@@ -91,8 +117,10 @@
                     <connections>
                         <outlet property="contentView" destination="8bC-Xf-vdC" id="njS-Aa-GiW"/>
                         <outlet property="deleteButton" destination="iTB-dM-MKC" id="OSp-Xh-Dkb"/>
+                        <outlet property="firstImageDeleteButton" destination="6da-hx-zYN" id="weo-Ub-W4L"/>
                         <outlet property="firstImageView" destination="VCQ-rr-Esj" id="3jt-2o-aDx"/>
                         <outlet property="firstView" destination="f1z-n7-bds" id="uLB-NJ-kXi"/>
+                        <outlet property="secondImageDeleteButton" destination="XTX-5Q-xrG" id="xTg-wJ-1OS"/>
                         <outlet property="secondImageView" destination="v1g-ea-Ad9" id="joR-U4-o9a"/>
                         <outlet property="secondView" destination="IY2-YY-Xxa" id="eHz-wg-UhI"/>
                         <outlet property="startButton" destination="lSs-vM-UUj" id="KKm-2A-Y3j"/>
@@ -105,6 +133,7 @@
     </scenes>
     <resources>
         <image name="trash" catalog="system" width="117" height="128"/>
+        <image name="xmark.circle.fill" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

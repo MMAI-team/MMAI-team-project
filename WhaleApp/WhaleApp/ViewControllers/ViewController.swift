@@ -16,14 +16,22 @@ enum UploadImage {
 class ViewController: UIViewController {
     
     @IBOutlet var contentView: GradientView!
+    
     @IBOutlet weak var firstView: UIView!
     @IBOutlet weak var secondView: UIView!
     @IBOutlet weak var firstImageView: UIImageView!
     @IBOutlet weak var secondImageView: UIImageView!
+    
     @IBOutlet weak var startButton: UIButton!
+    
     @IBOutlet weak var deleteButton: UIButton!
+    @IBOutlet weak var firstImageDeleteButton: UIButton!
+    @IBOutlet weak var secondImageDeleteButton: UIButton!
     
     private var type: UploadImage = .first
+    
+    private var firstImage: UIImage?
+    private var secondImage: UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +46,7 @@ class ViewController: UIViewController {
         setupFirstView()
         setupSecondView()
         setupStartButtonView()
-        setupDeleteButtonView()
+        setupDeleteButtonsView()
     }
     
     private func setupContentView() {
@@ -79,29 +87,73 @@ class ViewController: UIViewController {
     private func setupStartButtonView() {
         startButton.setTitle("Compare", for: .normal)
         startButton.setTitleColor(.white, for: .normal)
+        startButton.setTitle("Please upload photos", for: .disabled)
+        startButton.setTitleColor(SColor.accentS, for: .disabled)
         startButton.titleLabel?.font =  .systemFont(ofSize: 18.0, weight: .medium)
         
         startButton.layer.cornerRadius = 16.0
         startButton.layer.masksToBounds = true
         
         startButton.backgroundColor = SColor.accentF.withAlphaComponent(0.5)
+        
+        startButton.addTarget(self, action: #selector(startAction), for: .touchUpInside)
+        
+        renderStartButton(with: false)
     }
     
-    private func setupDeleteButtonView() {
+    private func setupDeleteButtonsView() {
         deleteButton.addTarget(self, action: #selector(deleteImages), for: .touchUpInside)
+        firstImageDeleteButton.addTarget(self, action: #selector(deleteFirstImages), for: .touchUpInside)
+        secondImageDeleteButton.addTarget(self, action: #selector(deleteSecondImages), for: .touchUpInside)
     }
+    
+    private func renderStartButton(with state: Bool) {
+        startButton.isEnabled = state
+        startButton.backgroundColor = (state ? SColor.accentF : .white).withAlphaComponent(0.5)
+    }
+    
+    private func checkIfImagesExist(_ image1: UIImage?, _ image2: UIImage?) -> Bool { image1 != nil && image2 != nil }
     
     // MARK: -
     
+    @objc func startAction() {
+        if let image1 = firstImage, let image2 = secondImage {
+            
+        }
+        else {
+            renderStartButton(with: false)
+        }
+    }
+    
     @objc func deleteImages() {
-        firstImageView.image = SImage.plus
-        secondImageView.image = SImage.plus
+        UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve) {
+            self.firstImageView.image = SImage.plus
+            self.secondImageView.image = SImage.plus
+        }
+        
+        firstImage = nil
+        secondImage = nil
+        
+        renderStartButton(with: false)
+    }
+    
+    @objc func deleteFirstImages() {
+        UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve) { self.firstImageView.image = SImage.plus }
+        
+        firstImage = nil
+        renderStartButton(with: false)
+    }
+    
+    @objc func deleteSecondImages() {
+        UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve) { self.secondImageView.image = SImage.plus }
+        
+        secondImage = nil
+        renderStartButton(with: false)
     }
     
     @objc func uploadFirstImageTap() {
         type = .first
         importPicture()
-        
     }
     
     @objc func uploadSecondImageTap() {
@@ -126,8 +178,13 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
         switch type {
         case .first:
             firstImageView.image = image
+            firstImage = image
         case .second:
             secondImageView.image = image
+            secondImage = image
         }
+        
+        let state = checkIfImagesExist(firstImage, secondImage)
+        renderStartButton(with: state)
     }
 }
