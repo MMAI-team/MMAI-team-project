@@ -8,7 +8,7 @@
 import UIKit
 
 struct SColor {
-    static let accentF: UIColor = UIColor(hex: 0x2C4DDE)
-    static let accentS: UIColor = UIColor(hex: 0x090C7D)
-    static let background: UIColor = UIColor(hex: 0x090D2B)
+    static let accentF: UIColor = UIColor(hex: 0x1F2EBE)
+    static let accentS: UIColor = UIColor(hex: 0x6F82E4)
+    static let background: UIColor = UIColor(hex: 0x19335A)
 }
