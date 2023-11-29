@@ -118,7 +118,7 @@ class ViewController: UIViewController {
     
     @objc func startAction() {
         if let image1 = firstImage, let image2 = secondImage {
-            
+            AIManager.compareImages(image1, image2)
         }
         else {
             renderStartButton(with: false)

@@ -17,6 +17,7 @@
 		DEE3678B2B177CBD00C8D4CD /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE3678A2B177CBD00C8D4CD /* UIColor+Hex.swift */; };
 		DEE3678E2B178C5300C8D4CD /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE3678D2B178C5300C8D4CD /* GradientView.swift */; };
 		DEE367902B17925D00C8D4CD /* SImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE3678F2B17925D00C8D4CD /* SImage.swift */; };
+		DEE367932B17C0FE00C8D4CD /* AIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE367922B17C0FE00C8D4CD /* AIManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		DEE3678A2B177CBD00C8D4CD /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		DEE3678D2B178C5300C8D4CD /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		DEE3678F2B17925D00C8D4CD /* SImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SImage.swift; sourceTree = "<group>"; };
+		DEE367922B17C0FE00C8D4CD /* AIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 		DEE367852B177BE300C8D4CD /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				DEE367922B17C0FE00C8D4CD /* AIManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 				DEE367722B17750E00C8D4CD /* SceneDelegate.swift in Sources */,
 				DEE3678B2B177CBD00C8D4CD /* UIColor+Hex.swift in Sources */,
 				DEE367902B17925D00C8D4CD /* SImage.swift in Sources */,
+				DEE367932B17C0FE00C8D4CD /* AIManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
