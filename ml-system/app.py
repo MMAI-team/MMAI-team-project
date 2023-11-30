@@ -3,6 +3,7 @@ import flask
 from io import StringIO
 from preprocessor import preprocess_data
 from preprocessor import PreprocessorML
+from preprocessor import DataLoader
 from model import get_TRANSFORMER
 import base64
 import joblib
@@ -32,12 +33,17 @@ def submit():
     
     data_df = pd.read_csv(csv_io)
     
-    X, index = preprocess_data(data_df)
+    X, index_transformer = preprocess_data(data_df)
+    
+    X_FNN, index_fnn = DataLoader(batch_size = 2048).load_submit(data=data_df,
+                                 preprocess=True, divide=False, params_path='dataset_config.json', columns_to_delete = [ 'city', 'dob', 'job',  'first', 'last','trans_date_trans_time','category','trans_num',
+                      'lat','longs','merch_lat','merch_long','unix_time','street','merchant','state','zip','gender'], normalization=['amt', 'delta_time', 'distance', 'city_pop', 'age', 'hour', 'weekday'])
+
 
     print(X)
     preds_tranformer = transformer.predict(X)
     print(tf.argmax(preds_tranformer, axis=2))
-    preds = preds_tranformer[0][index][1]
+    preds = preds_tranformer[0][index_transformer][1]
     print(preds)
     
     preprocessorML = PreprocessorML()
@@ -51,18 +57,25 @@ def submit():
     print(preds_random_forest_regressor)
     preds_xgboost = XGBoost.predict(data)
     print(preds_xgboost)
+    print(X_FNN)
+    preds_FNN = FNN.predict(X_FNN)
+    print(preds_FNN)
+    
     return jsonify({"transformer_scoring": float(preds),
                     "xgoost_regressor": abs(float(preds_xgboost[len(data_df) - 1])),
-                    "random_forest_regressor": float(preds_random_forest_regressor[len(data_df) - 1])})
+                    "random_forest_regressor": float(preds_random_forest_regressor[len(data_df) - 1]),
+                    "FNN":float(preds_FNN)})
 
 
 def define_model():
-    global transformer, randomTree, XGBoost
+    global transformer, randomTree, XGBoost, FNN
 
     transformer = get_TRANSFORMER()
     randomTree = joblib.load('random_forest_regressor.ml')
     XGBoost = xgb.XGBRegressor(n_jobs=-1, tree_method='gpu_hist')
     XGBoost.load_model('model_xgb_reg_v_1.json')
+    FNN = tf.keras.models.load_model('model_md_fnn_v3_0.h5')
+
 
     # the weights is in the folder 'weights', which is placed in the root of the src
     transformer.load_weights('trans_2_5.h5')

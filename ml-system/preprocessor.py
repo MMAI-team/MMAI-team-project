@@ -2,10 +2,13 @@ import tensorflow as tf
 AUTOTUNE = tf.data.AUTOTUNE
 import datetime
 from datetime import date, datetime
+import json
+import math
 
 import pandas as pd
 import numpy as np
 from datetime import date
+from sklearn import preprocessing
 
 # This class is deprecated and in the future versions will be deleted
 class Preprocessor:
@@ -215,7 +218,7 @@ class Preprocessor:
                     'merchant',
                     'unix_time',
                     'lat', 
-                    'long',
+                    'longs',
                     'merch_lat', 
                     'merch_long'
                     ], 
@@ -256,7 +259,6 @@ def preprocess_data(data):
 
 
 # The new preprocessor class
-
 class PreprocessorML():
     def __init__(self, normalization=False):
         self.norm = normalization
@@ -367,9 +369,9 @@ class PreprocessorML():
                       'state',
                       'gender']):
         dataset = self.add_age(dataset)
+        dataset = self.add_time(dataset)
         dataset = self.add_distance(dataset)
         dataset = self.one_hot_category(dataset)
-        dataset = self.add_time(dataset)
         dataset = self.add_workhour_category(dataset)
         dataset = self.add_weekend_category(dataset)
         dataset = self.add_gender(dataset)
@@ -383,7 +385,184 @@ class PreprocessorML():
 
         return dataset
     
-    
     def preprocess_submit(self, data):
         return self.preprocess(data)
+    
+
+class DataLoader():
+    def __init__(self, batch_size=32, max_transactions=32):
+        self.batch_size = batch_size
+        self.max_transactions = max_transactions
+
+
+    def add_padding_example(self, example):
+        len(example[0])
+        padding_ = [0 for x in example[0]]
+
+        while len(example) < self.max_transactions:
+            example.append(padding_)
+            
+        return example
+
+
+    def add_padding_label(self, label):
+        padding_ = 2
+
+        while len(label) < self.max_transactions:
+            label.append(padding_)
+            
+        return label
+    
+
+    def divide_to_examples(self, dataset):
+        examples = []
+        labels = []
+
+        c_user = 0
+        l_users = len(dataset.groupby('cc_num'))
+
+        for user_transactions in dataset.groupby('cc_num'):
+
+            user_df = user_transactions[1]
+
+            counter = 0
+            while user_df.iloc[counter: counter + self.max_transactions].shape[0] != 0:
+                current_example = user_df.iloc[counter: counter + self.max_transactions].copy().drop(['cc_num', 'is_fraud'], axis=1)
+
+                is_fraud = list(user_df.iloc[counter: counter + self.max_transactions]['is_fraud'])
+
+                array = current_example.to_numpy().tolist()
+
+                self.add_padding_example(array)
+                self.add_padding_label(is_fraud)
+
+                labels.append(is_fraud)
+                examples.append(array)
+            
+                counter += 1
+            
+            c_user += 1
+
+            if c_user % 1000 == 0:
+                print('Dataset processed: ', c_user / l_users, '%')
+
+
+        return np.asarray(examples), np.asarray(labels)
+
+
+    def normalize_dataset(self, dataset, columns, norm='euclid', params_path=None, save=False):
+        save_params = {}
+        loaded_params = None
+        if params_path!=None:
+            f = open(params_path)
+            loaded_params = json.load(f)
+            f.close()
+
+        for column in columns:
+            if norm == 'euclid':
+                dataset[column] = preprocessing.normalize([dataset[column]])[0]
+            elif norm == 'gauss':
+                vector = tf.constant([list(dataset[column])], dtype=tf.float32)
+                if loaded_params != None and column in loaded_params:
+                    mean = loaded_params[column]['mean']
+                    variance = loaded_params[column]['variance']
+                else:
+                    mean = tf.math.reduce_mean(vector, axis=1)
+                    variance = tf.math.reduce_variance(vector, axis=1)[0]
+
+                dataset[column] = dataset[column].apply(lambda x: (x - float(mean)) / math.sqrt(float(variance)))
+
+                config_dict = {'mean': float(mean), 'variance': float(variance)}
+                save_params[column] = config_dict
+        if  save:       
+            file = open('dataset_config.json', 'w')
+            str_obj = json.dumps(save_params)
+            file.write(str_obj)
+            file.flush()
+            file.close()
+        return dataset
+
+    
+    def process_batch(self, element_x, element_y):
+        return {'example':element_x, 'label':element_y}
+
+
+    def load_dataset(self, path, preprocess=False, columns_to_delete = [ 
+                      'city', 
+                      'dob', 
+                      'job', 
+                      'first', 
+                      'last',
+                      'trans_date_trans_time',
+                      'category',
+                      'trans_num',
+                      'lat',
+                      'longs',
+                      'merch_lat',
+                      'merch_long',
+                      'unix_time',
+                      'street',
+                      'merchant',
+                      'state',
+                      'gender'], to_process='ALL', normalization=['delta_time', 'distance', 'city_pop'], example_weights=None,
+                     divide=True, params_path=None):
+        dataset = pd.read_csv(path, index_col=0)
+        if to_process != 'ALL':
+            dataset = dataset[:to_process]
+
+        # Preprocess dataset if preprocess == True
+        if preprocess:
+            preprocessor = PreprocessorML()
+            dataset = preprocessor.preprocess(dataset, columns_to_delete)
         
+        if normalization:
+            dataset = self.normalize_dataset(dataset, normalization, norm='gauss', params_path=params_path)
+
+        dataset_X, dataset_y = None, None
+        if divide:
+            dataset_X, dataset_y = self.divide_to_examples(dataset)
+        else:
+            dataset_X, dataset_y = dataset.drop(['is_fraud', 'cc_num'], axis = 1).to_numpy().tolist(), list(dataset['is_fraud'])
+        
+
+        dataset = tf.data.Dataset.from_tensor_slices((dataset_X, dataset_y))
+        
+        return dataset.batch(self.batch_size).prefetch(AUTOTUNE)
+    
+    def load_submit(self, data, preprocess=False, columns_to_delete = [ 
+                      'city', 
+                      'dob', 
+                      'job', 
+                      'first', 
+                      'last',
+                      'trans_date_trans_time',
+                      'category',
+                      'trans_num',
+                      'lat',
+                      'longs',
+                      'merch_lat',
+                      'merch_long',
+                      'unix_time',
+                      'street',
+                      'merchant',
+                      'state',
+                      'gender'], to_process='ALL', normalization=['delta_time', 'distance', 'city_pop'], example_weights=None,
+                     divide=True, params_path=None):
+        
+        dataset = data
+        index = len(data) - 1
+        if to_process != 'ALL':
+            dataset = dataset[:to_process]
+
+        # Preprocess dataset if preprocess == True
+        if preprocess:
+            preprocessor = PreprocessorML()
+            dataset = preprocessor.preprocess(dataset, columns_to_delete)
+        
+        if normalization:
+            dataset = self.normalize_dataset(dataset, normalization, norm='gauss', params_path=params_path)
+
+        #dataset = self.add_padding_example(dataset)
+        dataset = tf.data.Dataset.from_tensor_slices(np.expand_dims(dataset.drop(['cc_num'], axis=1).iloc[index].to_numpy(), axis = 0))
+        
+        return dataset.batch(self.batch_size).prefetch(AUTOTUNE), index

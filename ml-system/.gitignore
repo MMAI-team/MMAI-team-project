@@ -311,6 +311,10 @@ paket-files/
 .cr/personal
 
 # Python Tools for Visual Studio (PTVS)
+bin/
+include/
+lib/python3.9/site-packages/
+lib/
 __pycache__/
 *.pyc
 
