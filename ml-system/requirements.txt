@@ -1,8 +1,8 @@
-pandas
-numpy
-flask
-tensorflow
-python-dotenv
-joblib
-xgboost
-scikit-learn
+pandas == 2.1.0
+numpy == 1.24.3
+flask == 2.3.3
+tensorflow == 2.13.0
+python-dotenv == 1.0.0
+joblib == 1.3.2
+xgboost == 2.0.0
+scikit-learn == 1.2.2 
