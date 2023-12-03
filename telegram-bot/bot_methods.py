@@ -20,7 +20,7 @@ class BotMethods:
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="I'm a bot, please talk to me!\nChoose a method:",
+            text="Let's begin!\nChoose a method:",
             reply_markup=self.reply_keyboard,
         )
         return CHOOSING_METHOD
@@ -33,45 +33,52 @@ class BotMethods:
         reply_markup = ReplyKeyboardRemove()
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"You chose {method_choice}.\nNow, send the first document.",
+            text=f"You chose {method_choice}.\nNow, send the first photo.",
             reply_markup=reply_markup,
         )
         return SEND_FIRST_DOCUMENT
 
     async def send_first_document(self, update: Update, context: CallbackContext):
-        file_id = update.message.document.file_id
+        file_path = "file1.jpg"
 
-        # open file using opencv
-        new_file = await context.bot.get_file(file_id)
-        await new_file.download_to_drive("file1.jpg")
+        if update.message.document is not None:
+            file_id = update.message.document.file_id
+            new_file = await context.bot.get_file(file_id)
+            await new_file.download_to_drive(file_path)
+
+        elif update.message.photo is not None:
+            file_id = update.message.photo[-1].file_id
+            new_file = await context.bot.get_file(file_id)
+            await new_file.download_to_drive(file_path)
 
         reply_markup = ReplyKeyboardRemove()
-        await context.bot.send_document(
-            chat_id=update.effective_chat.id,
-            document=file_id,
-            reply_markup=reply_markup,
-        )
+
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="First document received.\nNow, send the second document.",
+            text="First document received.\nNow, send the second photo.",
+            reply_markup=reply_markup,
         )
         return SEND_SECOND_DOCUMENT
 
     async def send_second_document(self, update: Update, context: CallbackContext):
-        file_id = update.message.document.file_id
+        file_path = "file2.jpg"
 
-        # open file using opencv
-        new_file = await context.bot.get_file(file_id)
-        await new_file.download_to_drive("file2.jpg")
+        if update.message.document is not None:
+            file_id = update.message.document.file_id
+            new_file = await context.bot.get_file(file_id)
+            await new_file.download_to_drive(file_path)
+
+        elif update.message.photo is not None:
+            file_id = update.message.photo[-1].file_id
+            new_file = await context.bot.get_file(file_id)
+            await new_file.download_to_drive(file_path)
 
         reply_markup = ReplyKeyboardRemove()
-        await context.bot.send_document(
-            chat_id=update.effective_chat.id,
-            document=file_id,
-            reply_markup=reply_markup,
-        )
+
         await context.bot.send_message(
-            chat_id=update.effective_chat.id, text="Received both documents!"
+            chat_id=update.effective_chat.id,
+            text="Received both documents!",
+            reply_markup=reply_markup,
         )
 
         model = self.models[self.model_index]

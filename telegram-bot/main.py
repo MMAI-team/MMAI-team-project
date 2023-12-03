@@ -44,10 +44,10 @@ if __name__ == "__main__":
         states={
             CHOOSING_METHOD: [MessageHandler(filters.TEXT, bot_methods.choose_method)],
             SEND_FIRST_DOCUMENT: [
-                MessageHandler(filters.ATTACHMENT, bot_methods.send_first_document)
+                MessageHandler(filters.ATTACHMENT | filters.PHOTO, bot_methods.send_first_document)
             ],
             SEND_SECOND_DOCUMENT: [
-                MessageHandler(filters.ATTACHMENT, bot_methods.send_second_document)
+                MessageHandler(filters.ATTACHMENT | filters.PHOTO, bot_methods.send_second_document)
             ],
         },
         fallbacks=[],
