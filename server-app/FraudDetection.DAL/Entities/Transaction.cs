@@ -27,6 +27,7 @@ public record Transaction : BaseEntity
     public string unix_time { get; set; }
     public string merch_lat { get; set; }
     public string merch_long { get; set; }
+    public bool is_fraud { get; set; }
 
     #endregion CSV Properties
 

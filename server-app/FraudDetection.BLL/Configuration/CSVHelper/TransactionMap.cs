@@ -2,7 +2,7 @@
 using FraudDetection.DAL.Entities;
 using System.Globalization;
 
-namespace FraudDetection.BLL.Abstractions;
+namespace FraudDetection.BLL.Configuration.CSVHelper;
 
 public sealed class TransactionMap : ClassMap<Transaction>
 {

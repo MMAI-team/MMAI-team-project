@@ -5,7 +5,6 @@ using FraudDetection.WebApp.Models.UserModels;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Transactions;
 
 namespace FraudDetection.WebApp.Controllers;
 
@@ -23,13 +22,16 @@ public class UserController : ControllerBase
     {
         var users = await _userManager.GetAll()
             .Include(x => x.Transactions
-                .Take(30)
-                .OrderBy(x => x.trans_date_trans_time))
+                .Take(50)
+                .OrderBy(y => y.trans_date_trans_time))
+            .Where(x => x.Transactions.Any())
             .Take(10)
             .ToListAsync();
 
-        users.Adapt<List<UserViewModel>>().ForEach(x => x.Name = x.Transactions.FirstOrDefault()?.merchant);
+        var res = users.Adapt<List<UserViewModel>>();
 
-        return Ok(users);
+        res.ForEach(x => x.Name = x.Transactions.FirstOrDefault()?.merchant ?? "Unknown");
+
+        return Ok(res);
     }
 }

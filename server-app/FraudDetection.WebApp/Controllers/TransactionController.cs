@@ -13,27 +13,41 @@ public class TransactionController : ControllerBase
 {
     private readonly IEntityManager<Transaction> _transactionManager;
     private readonly ICsvService _csvService;
+    private readonly IFraudDetectionService _fraudDetectionService;
 
     private readonly int AdditionalLastTransactionToVerify = 31;
 
-    public TransactionController(IEntityManager<Transaction> transactionManager, ICsvService csvService)
+    public TransactionController(IEntityManager<Transaction> transactionManager, ICsvService csvService, IFraudDetectionService fraudDetectionService)
     {
         _transactionManager = transactionManager;
         _csvService = csvService;
+        _fraudDetectionService = fraudDetectionService;
     }
 
     [HttpPut("fraud-verification")]
     public async Task<IActionResult> FraudVerification(string trans_num)
     {
-        var transactionToVerify = await _transactionManager.GetAll().FirstOrDefaultAsync(x => x.trans_num == trans_num);
+        var transactionToVerify = await _transactionManager.GetAll().FirstOrDefaultAsync(x => x.trans_num == trans_num)
+            ?? throw new BadHttpRequestException("");
 
         var transactions = await _transactionManager.GetAll()
-            .Where(x => x.cc_num == transactionToVerify.cc_num)
-            .OrderBy(x => x.trans_date_trans_time)
+            .Where(x => x.cc_num == transactionToVerify.cc_num && x.trans_num != transactionToVerify.trans_num
+                        && x.trans_date_trans_time < transactionToVerify.trans_date_trans_time)
             .Take(AdditionalLastTransactionToVerify)
+            .OrderBy(x => x.trans_date_trans_time)
+            .ProjectToType<TransactionVerifyModel>()
             .ToListAsync();
 
-        return Ok(transactions);
+        var fileBytes = await _csvService.GenerateCsvAsync(transactions.Prepend(transactionToVerify.Adapt<TransactionVerifyModel>()));
+
+        var scoreModel = await _fraudDetectionService.VerifyTransactionAsync(Convert.ToBase64String(fileBytes).Substring(4));
+
+        transactionToVerify.VerifiedAt = DateTime.Now;
+        transactionToVerify.FraudScoring = (double)scoreModel.transformer_scoring;
+
+        await _transactionManager.UpdateAsync(transactionToVerify);
+
+        return Ok();
     }
 
     [HttpGet("fraud")]

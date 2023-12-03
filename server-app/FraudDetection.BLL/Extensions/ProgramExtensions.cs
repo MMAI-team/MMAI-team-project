@@ -1,5 +1,6 @@
 ﻿using FraudDetection.BLL.Abstractions;
 using FraudDetection.BLL.Managers;
+using FraudDetection.BLL.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FraudDetection.BLL.Extensions;
@@ -17,5 +18,6 @@ public static class ProgramExtensions
     {
         services.AddScoped(typeof(IEntityManager<>), typeof(EntityManager<>));
         services.AddScoped<ICsvService, CsvService>();
+        services.AddScoped<IFraudDetectionService, FraudDetectionService>();
     }
 }

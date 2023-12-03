@@ -57,7 +57,7 @@ public class EntityManager<Entity> : IEntityManager<Entity> where Entity : BaseE
     }
 
     public virtual async Task<bool> DeleteAllDataAsync()
-    { 
+    {
         _dataContext.Set<Entity>().RemoveRange(_dataContext.Set<Entity>());
         await _dataContext.SaveChangesAsync();
         return true;

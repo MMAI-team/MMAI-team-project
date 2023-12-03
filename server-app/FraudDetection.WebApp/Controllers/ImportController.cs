@@ -1,4 +1,5 @@
 ﻿using FraudDetection.BLL.Abstractions;
+using FraudDetection.BLL.Configuration.CSVHelper;
 using FraudDetection.DAL.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,15 @@ public class ImportController : ControllerBase
 
         foreach (var user in users)
             await _userManager.CreateAsync(user);
+
+        return Ok();
+    }
+
+    [HttpDelete("remove-users-transactions-data")]
+    public async Task<IActionResult> RemoveUsersTransactionsData()
+    {
+        await _userManager.DeleteAllDataAsync();
+        await _transactionManager.DeleteAllDataAsync();
 
         return Ok();
     }
