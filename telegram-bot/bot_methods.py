@@ -15,7 +15,7 @@ class BotMethods:
         self.reply_keyboard = ReplyKeyboardMarkup(
             [self.methods], one_time_keyboard=True
         )
-        self.model_index = 0
+        self.user_to_model = {}
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
@@ -26,9 +26,10 @@ class BotMethods:
         return CHOOSING_METHOD
 
     async def choose_method(self, update: Update, context: CallbackContext):
+        user_id = update.effective_chat.id
+
         method_choice = update.message.text
-        context.user_data["method"] = method_choice
-        self.model_index = self.methods.index(method_choice)
+        self.user_to_model[user_id] = self.methods.index(method_choice)
 
         reply_markup = ReplyKeyboardRemove()
         await context.bot.send_message(
@@ -39,7 +40,8 @@ class BotMethods:
         return SEND_FIRST_DOCUMENT
 
     async def send_first_document(self, update: Update, context: CallbackContext):
-        file_path = "file1.jpg"
+        user_id = update.effective_chat.id
+        file_path = f"{user_id}-1.jpg"
 
         if update.message.document is not None:
             file_id = update.message.document.file_id
@@ -61,7 +63,8 @@ class BotMethods:
         return SEND_SECOND_DOCUMENT
 
     async def send_second_document(self, update: Update, context: CallbackContext):
-        file_path = "file2.jpg"
+        user_id = update.effective_chat.id
+        file_path = f"{user_id}-2.jpg"
 
         if update.message.document is not None:
             file_id = update.message.document.file_id
@@ -81,16 +84,17 @@ class BotMethods:
             reply_markup=reply_markup,
         )
 
-        model = self.models[self.model_index]
+        model = self.models[self.user_to_model[user_id]]
 
-        # TODO: get result from model using the two files
-        result = model.predict(["file1.jpg", "file2.jpg"])
+        photos = [f"{user_id}-1.jpg", f"{user_id}-2.jpg"]
+        result = model.predict(photos)
 
         await context.bot.send_message(
-            chat_id=update.effective_chat.id, text=f"Result: {result}"
+            chat_id=update.effective_chat.id,
+            text=f"Result: {result}",
         )
 
-        # Clear user_data for the next conversation
+
         context.user_data.clear()
 
         return ConversationHandler.END
