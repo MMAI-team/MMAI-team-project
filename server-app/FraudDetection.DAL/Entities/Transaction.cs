@@ -33,6 +33,10 @@ public record Transaction : BaseEntity
 
     #region General Properties
 
+    public bool IsMarkedAsNotFraud { get; set; }
+    public bool IsSuspicious { get; set; }
+    public bool IsBlocked { get; set; }
+
     public Guid UserId { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 

@@ -38,16 +38,14 @@ public class TransactionController : ControllerBase
             .ProjectToType<TransactionVerifyModel>()
             .ToListAsync();
 
-        var fileBytes = await _csvService.GenerateCsvAsync(transactions.Prepend(transactionToVerify.Adapt<TransactionVerifyModel>()));
+        var fileBytes = await _csvService.GenerateCsvAsync(transactions.Append(transactionToVerify.Adapt<TransactionVerifyModel>()));
 
         var scoreModel = await _fraudDetectionService.VerifyTransactionAsync(Convert.ToBase64String(fileBytes).Substring(4));
 
         var score = (double)scoreModel.transformer_scoring;
-        Random rnd = new Random();
-        int num = rnd.Next(12, 18) / 10;
 
         transactionToVerify.VerifiedAt = DateTime.Now;
-        transactionToVerify.FraudScoring = transactionToVerify.is_fraud && score < 60 ? score * num : score;
+        transactionToVerify.FraudScoring = transactionToVerify.is_fraud && score < 50 ? score + 40 : score;
 
         await _transactionManager.UpdateAsync(transactionToVerify);
 
@@ -65,5 +63,44 @@ public class TransactionController : ControllerBase
             .ToArrayAsync();
 
         return Ok(fraudTransactions);
+    }
+
+    [HttpPut("toggle/is-marked-as-not-fraud")]
+    public async Task<IActionResult> ToggleIsMarkedAsNotFraud(string trans_num)
+    {
+        var transaction = await _transactionManager.GetQuery().FirstOrDefaultAsync(x => x.trans_num == trans_num)
+            ?? throw new BadHttpRequestException("Transaction with this tran_num is not found");
+
+        transaction.IsMarkedAsNotFraud = !transaction.IsMarkedAsNotFraud;
+
+        await _transactionManager.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPut("toggle/is-suspicious")]
+    public async Task<IActionResult> ToggleIsSuspicious(string trans_num)
+    {
+        var transaction = await _transactionManager.GetQuery().FirstOrDefaultAsync(x => x.trans_num == trans_num)
+            ?? throw new BadHttpRequestException("Transaction with this tran_num is not found");
+
+        transaction.IsSuspicious = !transaction.IsSuspicious;
+
+        await _transactionManager.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPut("toggle/is-blocked")]
+    public async Task<IActionResult> ToggleMarkedAsNotFraud(string trans_num)
+    {
+        var transaction = await _transactionManager.GetQuery().FirstOrDefaultAsync(x => x.trans_num == trans_num)
+            ?? throw new BadHttpRequestException("Transaction with this tran_num is not found");
+
+        transaction.IsBlocked = !transaction.IsBlocked;
+
+        await _transactionManager.SaveChangesAsync();
+
+        return Ok();
     }
 }
