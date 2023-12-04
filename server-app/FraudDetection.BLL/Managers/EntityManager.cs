@@ -14,10 +14,11 @@ public class EntityManager<Entity> : IEntityManager<Entity> where Entity : BaseE
         _dataContext = dataContext;
     }
 
-    public virtual IQueryable<Entity> GetAll()
-    {
-        return _dataContext.Set<Entity>().AsNoTracking();
-    }
+    public virtual async Task SaveChangesAsync() => await _dataContext.SaveChangesAsync();
+
+    public virtual IQueryable<Entity> GetQuery() => _dataContext.Set<Entity>();
+
+    public virtual IQueryable<Entity> GetAll() => _dataContext.Set<Entity>().AsNoTracking();
 
     public virtual async Task<Entity?> GetByIdAsync(Guid Id)
     {

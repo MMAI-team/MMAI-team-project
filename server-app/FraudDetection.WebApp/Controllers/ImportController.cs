@@ -2,6 +2,7 @@
 using FraudDetection.BLL.Configuration.CSVHelper;
 using FraudDetection.DAL.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FraudDetection.WebApp.Controllers;
 
@@ -41,12 +42,30 @@ public class ImportController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("remove-users-transactions-data")]
-    public async Task<IActionResult> RemoveUsersTransactionsData()
+    [HttpDelete("clear-verifications")]
+    public async Task<IActionResult> ClearVerifications()
     {
-        await _userManager.DeleteAllDataAsync();
-        await _transactionManager.DeleteAllDataAsync();
+        var verifiedTransaction = await _transactionManager.GetQuery()
+            .Where(x => x.VerifiedAt != null)
+            .ToListAsync();
+
+        verifiedTransaction.ForEach(x =>
+        {
+            x.VerifiedAt = null;
+            x.FraudScoring = null;
+        });
+
+        await _transactionManager.SaveChangesAsync();
 
         return Ok();
     }
+
+    //[HttpDelete("remove-users-transactions-data")]
+    //public async Task<IActionResult> RemoveUsersTransactionsData()
+    //{
+    //    await _userManager.DeleteAllDataAsync();
+    //    await _transactionManager.DeleteAllDataAsync();
+
+    //    return Ok();
+    //}
 }

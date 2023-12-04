@@ -1,3 +1,4 @@
+using BusinessGame.WebApi.Configurations;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using FraudDetection.BLL.Extensions;
@@ -23,6 +24,8 @@ builder.Services.AddFluentValidationRulesToSwagger();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+MapsterConfig.RegisterMapsterConfig();
 
 #region Add Solution Dependensies
 
@@ -71,7 +74,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "LabiGator API");
+        c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Fraud Detection System API");
         c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
     });
 

@@ -4,6 +4,10 @@ namespace FraudDetection.BLL.Abstractions;
 
 public interface IEntityManager<Entity> where Entity : BaseEntity
 {
+    Task SaveChangesAsync();
+
+    IQueryable<Entity> GetQuery();
+
     IQueryable<Entity> GetAll();
 
     Task<Entity> GetByIdAsync(Guid Id);

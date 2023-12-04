@@ -1,6 +1,8 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
 using FraudDetection.BLL.Abstractions;
+using System.Formats.Asn1;
 using System.Globalization;
 using System.Text;
 
@@ -33,6 +35,8 @@ public class CsvService : ICsvService
         using (var streamWriter = new StreamWriter(memoryStream, Encoding.UTF8))
         using (var csv = new CsvWriter(streamWriter, Configuration))
         {
+            var options = new TypeConverterOptions { Formats = new[] { "yyyy-MM-d hh:mm:ss" } };
+            csv.Context.TypeConverterOptionsCache.AddOptions<DateTimeOffset>(options);
             csv.WriteRecords(entities);
             await streamWriter.FlushAsync();
         }

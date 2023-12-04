@@ -13,19 +13,30 @@ namespace FraudDetection.WebApp.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IEntityManager<User> _userManager;
+    private readonly IEntityManager<Transaction> _transactionManager;
 
-    public UserController(IEntityManager<User> transactionManager)
-        => _userManager = transactionManager;
+    public UserController(IEntityManager<User> userManager, IEntityManager<Transaction> transactionManager)
+    {
+        _userManager = userManager;
+        _transactionManager = transactionManager;
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
+        var userFraudIds = await _transactionManager.GetAll()
+            .Where(x => x.is_fraud)
+            .Select(x => x.cc_num)
+            .Distinct()
+            .Take(5)
+            .ToArrayAsync();
+
         var users = await _userManager.GetAll()
+            .Where(x => userFraudIds.Contains(x.cc_num))
             .Include(x => x.Transactions
-                .Take(50)
+                .OrderByDescending(y => y.is_fraud)
+                .Take(30)
                 .OrderBy(y => y.trans_date_trans_time))
-            .Where(x => x.Transactions.Any())
-            .Take(10)
             .ToListAsync();
 
         var res = users.Adapt<List<UserViewModel>>();

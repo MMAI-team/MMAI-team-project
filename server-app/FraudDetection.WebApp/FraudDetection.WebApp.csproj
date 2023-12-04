@@ -32,8 +32,4 @@
     <ProjectReference Include="..\FraudDetection.BLL\FraudDetection.BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
-
 </Project>

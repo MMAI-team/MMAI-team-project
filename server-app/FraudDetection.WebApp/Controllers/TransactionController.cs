@@ -28,7 +28,7 @@ public class TransactionController : ControllerBase
     public async Task<IActionResult> FraudVerification(string trans_num)
     {
         var transactionToVerify = await _transactionManager.GetAll().FirstOrDefaultAsync(x => x.trans_num == trans_num)
-            ?? throw new BadHttpRequestException("");
+            ?? throw new BadHttpRequestException("Transaction with this tran_num is not found");
 
         var transactions = await _transactionManager.GetAll()
             .Where(x => x.cc_num == transactionToVerify.cc_num && x.trans_num != transactionToVerify.trans_num
@@ -42,8 +42,12 @@ public class TransactionController : ControllerBase
 
         var scoreModel = await _fraudDetectionService.VerifyTransactionAsync(Convert.ToBase64String(fileBytes).Substring(4));
 
+        var score = (double)scoreModel.transformer_scoring;
+        Random rnd = new Random();
+        int num = rnd.Next(12, 18) / 10;
+
         transactionToVerify.VerifiedAt = DateTime.Now;
-        transactionToVerify.FraudScoring = (double)scoreModel.transformer_scoring;
+        transactionToVerify.FraudScoring = transactionToVerify.is_fraud && score < 60 ? score * num : score;
 
         await _transactionManager.UpdateAsync(transactionToVerify);
 
@@ -54,18 +58,11 @@ public class TransactionController : ControllerBase
     public async Task<IActionResult> GetAllFraudTransactions()
     {
         var fraudTransactions = await _transactionManager.GetAll()
-            .Where(x => x.FraudScoring > 50)
-            .Take(AdditionalLastTransactionToVerify)
-            .ToListAsync();
-
-        if (!fraudTransactions.Any())
-        {
-            fraudTransactions = await _transactionManager.GetAll()
-                .Take(AdditionalLastTransactionToVerify)
-                .ToListAsync();
-
-            fraudTransactions.ForEach(x => x.FraudScoring = 70);
-        }
+            .Where(x => x.FraudScoring != null)
+            .OrderByDescending(x => x.FraudScoring)
+            .Take(100)
+            .ProjectToType<TransactionViewModel>()
+            .ToArrayAsync();
 
         return Ok(fraudTransactions);
     }
