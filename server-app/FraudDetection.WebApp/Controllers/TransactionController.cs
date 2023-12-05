@@ -65,6 +65,19 @@ public class TransactionController : ControllerBase
         return Ok(fraudTransactions);
     }
 
+    [HttpGet("last-verified-transactions")]
+    public async Task<IActionResult> LastVerifiedTransactions()
+    {
+        var fraudTransactions = await _transactionManager.GetAll()
+            .Where(x => x.FraudScoring != null)
+            .OrderByDescending(x => x.VerifiedAt)
+            .Take(10)
+            .ProjectToType<TransactionVerifiedViewModel>()
+            .ToArrayAsync();
+
+        return Ok(fraudTransactions);
+    }
+
     [HttpPut("toggle/is-marked-as-not-fraud")]
     public async Task<IActionResult> ToggleIsMarkedAsNotFraud(string trans_num)
     {

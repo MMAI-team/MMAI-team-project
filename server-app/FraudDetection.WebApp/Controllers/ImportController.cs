@@ -64,7 +64,7 @@ public class ImportController : ControllerBase
     //public async Task<IActionResult> RemoveUsersTransactionsData()
     //{
     //    await _userManager.DeleteAllDataAsync();
-    //    await _transactionManager.DeleteAllDataAsync();
+    //    await _ruleManager.DeleteAllDataAsync();
 
     //    return Ok();
     //}
