@@ -71,12 +71,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    //app.UseSwagger();
-    //app.UseSwaggerUI(c =>
-    //{
-    //    c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Fraud Detection System API");
-    //    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-    //});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Fraud Detection System API");
+        c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+    });
 
     app.UseCors(option => option
     .AllowAnyOrigin()
