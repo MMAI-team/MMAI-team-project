@@ -8,7 +8,5 @@ public record RulePart : BaseEntity
     public string Feature { get; set; }
     public RulePartOperation Operation { get; set; }
     public string Value { get; set; }
-
-    public Rule Rule { get; set; }
     public Guid RuleId { get; set; }
 }

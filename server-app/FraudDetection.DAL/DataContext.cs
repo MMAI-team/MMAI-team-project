@@ -8,6 +8,8 @@ namespace FraudDetection.DAL;
 public partial class DataContext : DbContext
 {
     public virtual DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<Rule> Rules { get; set; }
+    public virtual DbSet<RulePart> RuleParts { get; set; }
     public virtual DbSet<User> Users { get; set; }
 
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
