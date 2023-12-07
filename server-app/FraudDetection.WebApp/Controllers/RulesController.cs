@@ -23,13 +23,17 @@ public class RuleController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var model = await _ruleManager.GetByIdAsync(id);
+        var model = await _ruleManager.GetAll()
+            .Include(x => x.Parts)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
         return model is null ? NotFound() : Ok(model);
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(RuleType ruleType)
         => Ok(await _ruleManager.GetAll()
+            .Include(x => x.Parts)
             .Where(x => x.RuleType == ruleType)
             .OrderBy(x => x.Name)
             .ToListAsync());
