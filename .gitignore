@@ -1,0 +1,6 @@
+*/*/.idea/
+.idea/
+*.env
+*.jpg
+*.h5
+.DS_Store
