@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 import base64
-import io
+import os
 from PIL import Image
-import numpy as np
 from models import PathModel
+import uuid
 
 app = Flask(__name__)
 
@@ -11,26 +11,30 @@ app = Flask(__name__)
 MODEL_PATH = "C:/Users/LiubomyrMaievskyi/Desktop/CNN.h5"
 model = PathModel(MODEL_PATH, "CNN model")
 
+app.config["UPLOAD_FOLDER"] = "C:/Users/LiubomyrMaievskyi/Desktop/test_images"
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()
 
-    # Decode the first image
+    # Generate a unique identifier for this set of images
+    unique_id = str(uuid.uuid4())
+
+    # Decode and save the first image
     image_data1 = base64.b64decode(data["image1"])
-    image1 = Image.open(io.BytesIO(image_data1))
+    image_path1 = os.path.join(app.config["UPLOAD_FOLDER"], f"{unique_id}-1.jpg")
+    with open(image_path1, "wb") as file:
+        file.write(image_data1)
 
-    # Decode the second image
+    # Decode and save the second image
     image_data2 = base64.b64decode(data["image2"])
-    image2 = Image.open(io.BytesIO(image_data2))
-
-    # Convert images to a format your model expects (e.g., numpy array)
-    # This conversion depends on your model's requirement
-    image_array1 = np.array(image1)
-    image_array2 = np.array(image2)
+    image_path2 = os.path.join(app.config["UPLOAD_FOLDER"], f"{unique_id}-2.jpg")
+    with open(image_path2, "wb") as file:
+        file.write(image_data2)
 
     # Process images with the model
-    result = model.predict([image_array1, image_array2])
+    result = model.predict([image_path1, image_path2])
 
     return jsonify(result)
 
