@@ -1,17 +1,23 @@
-from flask import Flask, request, jsonify
 import base64
 import os
-from PIL import Image
-from models import PathModel
 import uuid
+
+import dotenv
+from flask import Flask, jsonify, request
+from models import PathModel
+
+dotenv.load_dotenv()
 
 app = Flask(__name__)
 
 # Model configuration
-MODEL_PATH = "C:/Users/LiubomyrMaievskyi/Desktop/CNN.h5"
+MODEL_PATH = os.getenv("MODEL_PATH")
 model = PathModel(MODEL_PATH, "CNN model")
 
-app.config["UPLOAD_FOLDER"] = "C:/Users/LiubomyrMaievskyi/Desktop/test_images"
+app.config["UPLOAD_FOLDER"] = os.getenv("UPLOAD_FOLDER")
+
+if not os.path.exists(app.config["UPLOAD_FOLDER"]):
+    os.makedirs(app.config["UPLOAD_FOLDER"])
 
 
 @app.route("/predict", methods=["POST"])
