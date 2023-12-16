@@ -9,20 +9,17 @@ from telegram.ext import (
     ConversationHandler,
 )
 
-
-from models import (
-    DummyModel,
-    PathModel,
-)
 from bot_methods import (
     BotMethods,
     CHOOSING_METHOD,
     SEND_FIRST_DOCUMENT,
     SEND_SECOND_DOCUMENT,
 )
+from api_sender import APISender
 
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO
 )
 
 if __name__ == "__main__":
@@ -31,23 +28,31 @@ if __name__ == "__main__":
     token = env_values["BOT_TOKEN"]
     model_path = env_values["MODEL_PATH"]
 
-    model = PathModel(model_path, "CNN model")
-
     application = ApplicationBuilder().token(token).build()
 
-    models = [DummyModel("Method 1", 1), model]
+    # TODO: pass address and endpoint using env variables
+    api_sender = APISender("http://localhost:5000", "predict")
 
-    bot_methods = BotMethods(models)
+    models = api_sender.get_models()
+
+    bot_methods = BotMethods(models, api_sender)
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", bot_methods.start)],
         states={
-            CHOOSING_METHOD: [MessageHandler(filters.TEXT, bot_methods.choose_method)],
+            CHOOSING_METHOD: [MessageHandler(filters.TEXT,
+                                             bot_methods.choose_method)],
             SEND_FIRST_DOCUMENT: [
-                MessageHandler(filters.ATTACHMENT | filters.PHOTO, bot_methods.send_first_document)
+                MessageHandler(
+                    filters.ATTACHMENT | filters.PHOTO,
+                    bot_methods.send_first_document
+                )
             ],
             SEND_SECOND_DOCUMENT: [
-                MessageHandler(filters.ATTACHMENT | filters.PHOTO, bot_methods.send_second_document)
+                MessageHandler(
+                    filters.ATTACHMENT | filters.PHOTO,
+                    bot_methods.send_second_document
+                )
             ],
         },
         fallbacks=[],
