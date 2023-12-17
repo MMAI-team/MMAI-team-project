@@ -6,8 +6,9 @@ const Upload = () => {
     const [file1, setFile1] = useState(null);
     const [file2, setFile2] = useState(null);
     const [apiResponse, setApiResponse] = useState('');
-    const apiURL = process.env.FILES_UPLOAD_URL ||  'http://127.0.0.1:5000/upload';
+    const apiURL = process.env.FILES_UPLOAD_URL ||  'http://127.0.0.1:5000/predict';
     const handleFile1Change = (event) => {
+      setApiResponse("");
       setFile1(event.target.files[0]);
       if(event.target.files[0]==null){
         document.getElementById('delButton1').hidden=true;
@@ -18,6 +19,7 @@ const Upload = () => {
     };
   
     const handleFile2Change = (event) => {
+      setApiResponse("");
       setFile2(event.target.files[0]);
       if(event.target.files[0]==null){
         document.getElementById('delButton2').hidden=true;
@@ -27,11 +29,13 @@ const Upload = () => {
       }
     };
     const handleDel1 = (event) => {
+      setApiResponse("");setApiResponse("");
       document.getElementById('Control1').value = null;
       setFile1(null);
       document.getElementById('delButton1').hidden=true;
     }
     const handleDel2 = (event) => {
+      setApiResponse("");
       document.getElementById('Control2').value = null;
       setFile2(null);
       document.getElementById('delButton2').hidden=true;
@@ -48,10 +52,13 @@ const Upload = () => {
   
       axios.post(apiURL, formData)
         .then(response => {
-            var temp = response.data['message'];
+          console.log(response)
+            var temp = response.data;
             setApiResponse(temp);
         })
         .catch(error => {
+            
+            setApiResponse(error);
             console.error('Error uploading files:', error);
         });
     };
