@@ -1,6 +1,8 @@
 import logging
+import os
 
 from dotenv import dotenv_values
+import dotenv
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -23,10 +25,9 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    env_values = dotenv_values(".env")
+    dotenv.load_dotenv()
 
-    token = env_values["BOT_TOKEN"]
-    model_path = env_values["MODEL_PATH"]
+    token = os.environ.get("BOT_TOKEN")
 
     application = ApplicationBuilder().token(token).build()
 
