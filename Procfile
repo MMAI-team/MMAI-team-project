@@ -1,1 +1,0 @@
-worker: ./telegram-bot
