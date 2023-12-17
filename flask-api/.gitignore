@@ -371,3 +371,10 @@ docker-compose.*.yml
 .idea/*
 .devcontainer
 .idea
+
+# Ignore credentials file
+creds.json
+
+# Ignore folders with temporary files
+test_images/
+models/
