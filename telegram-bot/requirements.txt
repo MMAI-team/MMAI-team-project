@@ -1,0 +1,4 @@
+Pillow==10.1.0
+python-dotenv==1.0.0
+python-telegram-bot==20.7
+Requests==2.31.0
