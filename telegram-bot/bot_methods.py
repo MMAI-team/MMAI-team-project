@@ -1,3 +1,4 @@
+import os
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import (
     ContextTypes,
@@ -87,13 +88,19 @@ class BotMethods:
         model = self.models[self.user_to_model[user_id]]
 
         photos = [f"{user_id}-1.jpg", f"{user_id}-2.jpg"]
-        result = model.predict(photos)
+
+        try:
+            result = model.predict(photos)
+        except Exception as e:
+            result = f"Error: {e}"
 
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=f"Result: {result}",
         )
 
+        os.remove(f"{user_id}-1.jpg")
+        os.remove(f"{user_id}-2.jpg")
 
         context.user_data.clear()
 

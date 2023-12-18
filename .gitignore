@@ -4,3 +4,5 @@
 *.jpg
 *.h5
 .DS_Store
+telegram-bot/__pycache__
+.vscode
