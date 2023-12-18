@@ -28,6 +28,7 @@ The Whale Tail Classification System is designed to compare whale tail images, d
    - Users can choose between feature points or the CNN model for classification.
    - Deployed the Telegram bot on the Heroku platform, ensuring continuous access to its functionality.
    - User requests are forwarded to the API, and the classification results are returned.
+     To see more information about usage and running the bot you can check [Telegram bot README](telegram-bot/README.md).
 
 6. iOS App
    - Developed an iOS application for convenient use of the system on iPhones.
