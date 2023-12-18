@@ -29,9 +29,9 @@ class PathModel:
         prediction = float(self.model(input_images, training=False))
 
         if prediction < 0.5:
-            return "The photos are not similar!"
+            return "The images are not similar!"
         else:
-            return "The photos are similar!"
+            return "The images are similar!"
 
     def preprocess(self, img, scale=(224, 224)):
         img = Image.open(img)
@@ -56,6 +56,6 @@ class APIModel:
         result = self.sender.predict(images, self.model_id)
         print(f"Result: {result}")
         if result:
-            return "The images are similar"
+            return "The images are similar!"
         else:
-            return "The images are not similar"
+            return "The images are not similar!"
