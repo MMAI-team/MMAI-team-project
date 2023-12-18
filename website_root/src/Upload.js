@@ -105,7 +105,7 @@ const Upload = () => {
           <Col xs={6} className='justify-content-center'>
             <Form.Group >
               <Form.Label>Photo 2</Form.Label>
-              <Form.Control type="file" id="file1" onChange={handleFile2Change} />
+              <Form.Control type="file" id="file2" onChange={handleFile2Change} />
             </Form.Group>
             {file2 && (
               <Image className='mt-2 '
