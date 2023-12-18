@@ -11,15 +11,13 @@ CHOOSING_METHOD, SEND_FIRST_DOCUMENT, SEND_SECOND_DOCUMENT = range(3)
 
 
 class BotMethods:
-    def __init__(self, models, sender):
+    def __init__(self, models):
         self.models = models
-        self.methods = [model["name"] for model in models]
+        self.methods = [model.name for model in models]
         self.reply_keyboard = ReplyKeyboardMarkup(
             [self.methods], one_time_keyboard=True
         )
         self.user_to_model = {}
-
-        self.sender = sender
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
@@ -88,19 +86,12 @@ class BotMethods:
             reply_markup=reply_markup,
         )
 
-        # model = self.models[self.user_to_model[user_id]]
+        model = self.models[self.user_to_model[user_id]]
 
         photos = [f"{user_id}-1.jpg", f"{user_id}-2.jpg"]
 
-        # open the images as regular files
-        images = [open(photo, "rb") for photo in photos]
-        # encode using base64
-        images = [base64.b64encode(image.read()).decode("utf-8")
-                  for image in images]
-
-        # send the images to the API
         try:
-            result = self.sender.predict(images)
+            result = model.predict(photos)
         except Exception as e:
             result = f"Error: {e}"
 
