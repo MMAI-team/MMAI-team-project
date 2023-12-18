@@ -1,4 +1,3 @@
-from flask import Flask, request, jsonify
 import base64
 import os
 import uuid
@@ -8,6 +7,12 @@ from g_drive_service import GoogleDriveService
 from googleapiclient.http import MediaIoBaseDownload
 import io
 from tensorflow.keras import backend as K
+
+import dotenv
+from flask import Flask, jsonify, request
+from models import PathModel
+
+dotenv.load_dotenv()
 
 app = Flask(__name__)
 
