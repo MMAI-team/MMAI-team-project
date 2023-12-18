@@ -13,11 +13,11 @@ The Whale Tail Classification System is designed to compare whale tail images, d
 
 2. CNN Model
    - Trained a convolutional neural network model capable of high-precision classification when provided with two whale tail images.
-     To see model training process in detail you can check the [narrated CNN notebook](research/cnn/CNN_Siamese_97_mk2.ipynb)
+     To see model training process in detail you can check the [narrated CNN notebook](research/cnn/CNN_Siamese_97_mk2.ipynb).
 
 3. Feature Points
    - Identified the optimal parameters for a feature point-based solution using the Scale-Invariant Feature Transform (SIFT) methodology.
-     You can see the example of feature points application in the [Feature points notebook](research/feature_points/sift_matching.ipynb)
+     You can see the example of feature points application in the [Feature points notebook](research/feature_points/sift_matching.ipynb).
 
 4. API
    - Developed an API for image classification, serving as a crucial tool for the Telegram bot and website components.
