@@ -1,6 +1,5 @@
-import base64
+import os
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from PIL import Image
 from telegram.ext import (
     ContextTypes,
     ConversationHandler,
@@ -99,6 +98,9 @@ class BotMethods:
             chat_id=update.effective_chat.id,
             text=f"Result: {result}",
         )
+
+        os.remove(f"{user_id}-1.jpg")
+        os.remove(f"{user_id}-2.jpg")
 
         context.user_data.clear()
 
