@@ -37,9 +37,9 @@ class PathModel:
         prediction = float(self.model(input_images, training=False))
 
         if prediction < 0.5:
-            return "The photos are not similar!"
+            return False
         else:
-            return "The photos are similar!"
+            return True
 
     def preprocess(self, img, scale=(224, 224)):
         img = Image.open(img)
