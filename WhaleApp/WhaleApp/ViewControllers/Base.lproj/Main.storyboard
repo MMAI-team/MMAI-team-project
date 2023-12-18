@@ -97,6 +97,12 @@
                                     <color key="titleColor" red="0.98039215800000001" green="0.98039215800000001" blue="0.98039215800000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JPZ-bn-vri">
+                                <rect key="frame" x="175" y="705" width="43" height="21"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                <color key="textColor" red="0.94901967050000002" green="0.94901967050000002" blue="0.94901967050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <constraints>
@@ -109,7 +115,9 @@
                             <constraint firstItem="IY2-YY-Xxa" firstAttribute="width" secondItem="f1z-n7-bds" secondAttribute="width" multiplier="1.04237" id="TgE-aS-lUu"/>
                             <constraint firstItem="IY2-YY-Xxa" firstAttribute="height" secondItem="f1z-n7-bds" secondAttribute="height" multiplier="1.10847" id="Udq-h6-McI"/>
                             <constraint firstItem="f1z-n7-bds" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.5" id="XIe-zc-huX"/>
+                            <constraint firstItem="lSs-vM-UUj" firstAttribute="top" secondItem="JPZ-bn-vri" secondAttribute="bottom" constant="20" id="gxf-FR-AtH"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="lSs-vM-UUj" secondAttribute="bottom" constant="8" id="nYw-sB-v0b"/>
+                            <constraint firstItem="JPZ-bn-vri" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="pcS-mc-UNL"/>
                             <constraint firstItem="IY2-YY-Xxa" firstAttribute="top" secondItem="iTB-dM-MKC" secondAttribute="bottom" constant="190" id="vRo-Mt-Gay"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="iTB-dM-MKC" secondAttribute="trailing" constant="36" id="wBy-WP-qmC"/>
                         </constraints>
@@ -120,6 +128,7 @@
                         <outlet property="firstImageDeleteButton" destination="6da-hx-zYN" id="weo-Ub-W4L"/>
                         <outlet property="firstImageView" destination="VCQ-rr-Esj" id="3jt-2o-aDx"/>
                         <outlet property="firstView" destination="f1z-n7-bds" id="uLB-NJ-kXi"/>
+                        <outlet property="resultLabel" destination="JPZ-bn-vri" id="vt7-SF-OjL"/>
                         <outlet property="secondImageDeleteButton" destination="XTX-5Q-xrG" id="xTg-wJ-1OS"/>
                         <outlet property="secondImageView" destination="v1g-ea-Ad9" id="joR-U4-o9a"/>
                         <outlet property="secondView" destination="IY2-YY-Xxa" id="eHz-wg-UhI"/>

@@ -28,10 +28,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var firstImageDeleteButton: UIButton!
     @IBOutlet weak var secondImageDeleteButton: UIButton!
     
+    @IBOutlet weak var resultLabel: UILabel!
+    
     private var type: UploadImage = .first
     
     private var firstImage: UIImage?
     private var secondImage: UIImage?
+    
+    private let model = AIManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +51,7 @@ class ViewController: UIViewController {
         setupSecondView()
         setupStartButtonView()
         setupDeleteButtonsView()
+        setupResultLabel()
     }
     
     private func setupContentView() {
@@ -107,9 +112,20 @@ class ViewController: UIViewController {
         secondImageDeleteButton.addTarget(self, action: #selector(deleteSecondImages), for: .touchUpInside)
     }
     
+    private func setupResultLabel() {
+        resultLabel.isHidden = true
+    }
+    
     private func renderStartButton(with state: Bool) {
         startButton.isEnabled = state
         startButton.backgroundColor = (state ? SColor.accentF : .white).withAlphaComponent(0.5)
+    }
+    
+    private func renderResultLabel(with prediction: Int) {
+        let text = prediction > 66 ? "It looks similar" : "It looks different"
+        print(prediction)
+        resultLabel.text = text
+        resultLabel.isHidden = false
     }
     
     private func checkIfImagesExist(_ image1: UIImage?, _ image2: UIImage?) -> Bool { image1 != nil && image2 != nil }
@@ -117,8 +133,10 @@ class ViewController: UIViewController {
     // MARK: -
     
     @objc func startAction() {
-        if let image1 = firstImage, let image2 = secondImage {
-            AIManager.compareImages(image1, image2)
+        if let image1 = firstImage,
+           let image2 = secondImage,
+           let prediction = model.processImagesWithModel(image1, image2) {
+            renderResultLabel(with: Int(prediction))
         }
         else {
             renderStartButton(with: false)
@@ -134,6 +152,7 @@ class ViewController: UIViewController {
         firstImage = nil
         secondImage = nil
         
+        resultLabel.isHidden = true
         renderStartButton(with: false)
     }
     
@@ -141,6 +160,7 @@ class ViewController: UIViewController {
         UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve) { self.firstImageView.image = SImage.plus }
         
         firstImage = nil
+        resultLabel.isHidden = true
         renderStartButton(with: false)
     }
     
@@ -148,6 +168,7 @@ class ViewController: UIViewController {
         UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve) { self.secondImageView.image = SImage.plus }
         
         secondImage = nil
+        resultLabel.isHidden = true
         renderStartButton(with: false)
     }
     

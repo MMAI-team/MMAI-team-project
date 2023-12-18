@@ -18,6 +18,7 @@
 		DEE3678E2B178C5300C8D4CD /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE3678D2B178C5300C8D4CD /* GradientView.swift */; };
 		DEE367902B17925D00C8D4CD /* SImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE3678F2B17925D00C8D4CD /* SImage.swift */; };
 		DEE367932B17C0FE00C8D4CD /* AIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE367922B17C0FE00C8D4CD /* AIManager.swift */; };
+		DEF84B982B306278008B7B5B /* UIImage+MultiArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF84B972B306278008B7B5B /* UIImage+MultiArray.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		DEE3678D2B178C5300C8D4CD /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		DEE3678F2B17925D00C8D4CD /* SImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SImage.swift; sourceTree = "<group>"; };
 		DEE367922B17C0FE00C8D4CD /* AIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIManager.swift; sourceTree = "<group>"; };
+		DEF84B972B306278008B7B5B /* UIImage+MultiArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+MultiArray.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 				DEE3678C2B178C4000C8D4CD /* CustomViews */,
 				DEE367862B177BFF00C8D4CD /* Utils */,
 				DEE367892B177CB000C8D4CD /* Extensions */,
+				DEF84B962B30626A008B7B5B /* Model */,
 				DEE367842B177B9200C8D4CD /* Supporting Files */,
 				DEE367782B17750F00C8D4CD /* Assets.xcassets */,
 				DEE3677D2B17750F00C8D4CD /* Info.plist */,
@@ -118,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				DEE3678A2B177CBD00C8D4CD /* UIColor+Hex.swift */,
+				DEF84B972B306278008B7B5B /* UIImage+MultiArray.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -128,6 +132,13 @@
 				DEE3678D2B178C5300C8D4CD /* GradientView.swift */,
 			);
 			path = CustomViews;
+			sourceTree = "<group>";
+		};
+		DEF84B962B30626A008B7B5B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -205,6 +216,7 @@
 				DEE367882B177C1200C8D4CD /* SColor.swift in Sources */,
 				DEE3678E2B178C5300C8D4CD /* GradientView.swift in Sources */,
 				DEE367702B17750E00C8D4CD /* AppDelegate.swift in Sources */,
+				DEF84B982B306278008B7B5B /* UIImage+MultiArray.swift in Sources */,
 				DEE367722B17750E00C8D4CD /* SceneDelegate.swift in Sources */,
 				DEE3678B2B177CBD00C8D4CD /* UIColor+Hex.swift in Sources */,
 				DEE367902B17925D00C8D4CD /* SImage.swift in Sources */,
