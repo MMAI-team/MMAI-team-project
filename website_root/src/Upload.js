@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Form, Button, Image } from 'react-bootstrap';
 
+const apiURL =  "https://lubomyr-ai-api-b1f15885f038.herokuapp.com/ai/predict";
 const Upload = () => {
+  
     const [file1, setFile1] = useState(null);
     const [file2, setFile2] = useState(null);
     const [apiResponse, setApiResponse] = useState('');
-    const apiURL = process.env.FILES_UPLOAD_URL ||  'http://127.0.0.1:5000/predict';
+    
     const handleFile1Change = (event) => {
       setApiResponse("");
       setFile1(event.target.files[0]);
@@ -29,47 +31,65 @@ const Upload = () => {
       }
     };
     const handleDel1 = (event) => {
-      setApiResponse("");setApiResponse("");
-      document.getElementById('Control1').value = null;
+      setApiResponse("");      
       setFile1(null);
+      document.getElementById("file1").value = null;
       document.getElementById('delButton1').hidden=true;
     }
     const handleDel2 = (event) => {
       setApiResponse("");
-      document.getElementById('Control2').value = null;
       setFile2(null);
+      document.getElementById("file2").value = null;
       document.getElementById('delButton2').hidden=true;
     }
     const handleUpload = () => {
+      
       if (!file1 || !file2) {
         setApiResponse('Please select files for both inputs');
         return;
       }
   
-      const formData = new FormData();
-      formData.append('file1', file1);
-      formData.append('file2', file2);
-  
-      axios.post(apiURL, formData)
-        .then(response => {
-          console.log(response)
-            var temp = response.data;
-            setApiResponse(temp);
-        })
-        .catch(error => {
-            
-            setApiResponse(error);
-            console.error('Error uploading files:', error);
+      const readAsBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
         });
+      };
+    
+      const uploadImages = async () => {
+        try {
+          const base64File1 = await readAsBase64(file1);
+          const base64File2 = await readAsBase64(file2);
+    
+          const requestBody = {
+            "modelId": "sift",
+            "image1": base64File1,
+            "image2": base64File2
+          };
+          
+          const response = await axios.post(apiURL, requestBody, 
+            
+          );
+          
+          setApiResponse(response.request.responseText);
+        } catch (error) {
+          setApiResponse("An error has occured!");
+          console.error('Error uploading files:', error);
+        }
+      };
+    
+      uploadImages();
     };
   
     return (
       <Container>
         <Row className='mt-5 mb-3'>
           <Col xs={6}>
-            <Form.Group controlId="file1">
+            <Form.Group >
               <Form.Label>Photo 1</Form.Label>
-              <Form.Control id="Control1" type="file" onChange={handleFile1Change} />
+              <Form.Control id="file1" type="file" onChange={handleFile1Change} />
               
             </Form.Group>
             {file1 && (
@@ -83,9 +103,9 @@ const Upload = () => {
             )}
           </Col>
           <Col xs={6} className='justify-content-center'>
-            <Form.Group controlId="file2">
+            <Form.Group >
               <Form.Label>Photo 2</Form.Label>
-              <Form.Control type="file" id="Control2" onChange={handleFile2Change} />
+              <Form.Control type="file" id="file1" onChange={handleFile2Change} />
             </Form.Group>
             {file2 && (
               <Image className='mt-2 '
